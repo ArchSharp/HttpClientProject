@@ -23,10 +23,10 @@ namespace HttpClientProject
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 //Get Method
-                HttpResponseMessage response = await client.GetAsync("api/v1/department/0e7ca2ad-99fb-4cb8-a021-08d9da505136");
-                if (response.IsSuccessStatusCode)
+                HttpResponseMessage response_get = await client.GetAsync("api/v1/department/0e7ca2ad-99fb-4cb8-a021-08d9da505136");
+                if (response_get.IsSuccessStatusCode)
                 {
-                    string dept = await response.Content.ReadAsStringAsync();
+                    string dept = await response_get.Content.ReadAsStringAsync();
                     Result result = JsonConvert.DeserializeObject<Result>(dept);
                     
                     Console.WriteLine("Id:{0}\tName:{1}", result.Data.Id, result.Data.Description);
@@ -35,6 +35,20 @@ namespace HttpClientProject
                 else
                 {
                     Console.WriteLine("Internal server Error");
+                }
+                //post method
+                var department = new Department()
+                {
+                    Name = "QA",
+                    Description = "They shall be responsible for testing newly developed applications"
+                };
+                HttpResponseMessage response_post = await client.PostAsJsonAsync("api/v1/department", department);
+
+                if (response_post.IsSuccessStatusCode)
+                {
+                    // Get the URI of the created resource.
+                    Uri returnUrl = response_post.Headers.Location;
+                    Console.WriteLine(returnUrl);
                 }
             }
             Console.ReadKey();
